@@ -1,6 +1,6 @@
 """
-Operation is a base class which includes most of the heavy-lifting
-for tracing and auditing.
+BaseOperator is a base class which includes most of the 
+heavy-lifting for the execution.
 
 """
 
@@ -8,22 +8,59 @@ import abc
 import inspect
 import hashlib
 import functools
+import time
+import datetime
 
 class BaseOperator(abc.ABC):
 
-    def __init__(self):
-        self.graph = None
-        self.executions = 0
+    def __init__(self, **kwargs):
+        self.graph = None           # part of drawing dags
+        self.visits = 0             # number of times this operator has been run
+        self.execution_time_ns = 0   # nano seconds of cpu execution time
+
+        self.retry_count = _clamp(kwargs.get('retry_count', 1), 1, 5)
+        self.retry_wait = _clamp(kwargs.get('retry_wait', 5), 1, 300)
+
+        if inspect.getsource(self.execute) != inspect.getsource(self.__class__.execute):
+            raise Exception("operatro's __call__ method must not be overridden")
 
     @abc.abstractmethod
     def execute(self, data={}, context={}):
         raise NotImplementedError("execute must be overridden")
 
-
-
     def __call__(self, data={}, context={}):
-        self.executions += 1
-        return self.execute(data, context)
+        """
+        DO NOT OVERWRITE THIS METHOD
+        """
+        self.visits += 1
+        attempts_to_go = self.retry_count
+        while attempts_to_go > 0:
+            try:
+                start_time = time.process_time_ns()
+                outcome = self.execute(data, context)
+                end_time = time.process_time_ns()
+                break
+            except:
+                attempts_to_go -= 1
+                if attempts_to_go:
+                    time.sleep(self.retry_wait)
+
+        self.execution_time_ns += (end_time - start_time)
+
+        if context.get('trace', False):
+            print(F"[TRACE] {datetime.datetime.today().isoformat()} {data}")
+
+        return outcome
+
+    def __repr__(self):
+        return {
+            "operation": self.__class__.__name__,
+            "visits": self.visits,
+            "execution_time": self.execution_time_ns
+        }
+
+    def __str__(self):
+        return F"[SENSOR] {self.__class__.__name__} {self.visits} {self.execution_time_ns}"
 
     @functools.lru_cache(1)
     def version(self):
@@ -84,3 +121,12 @@ class BaseOperator(abc.ABC):
 
         return graph
 
+def _clamp(value, low_bound, high_bound):
+    """
+    'clamping' is fixing a value within a range
+    """
+    if value <= low_bound:
+        return low_bound
+    if value >= high_bound:
+        return high_bound
+    return value

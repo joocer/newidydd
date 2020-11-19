@@ -1,4 +1,4 @@
-from ..base import BaseOperator
+from .base_operator import BaseOperator
 
 
 class PrintOperator(BaseOperator):
