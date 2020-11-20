@@ -37,6 +37,6 @@ flow =  other > that > this
 data_reader = ['A', 'B', 'C', 'D']
 
 for data in data_reader:
-    runner.go(flow=flow, data=data, context={"trace": random.choice([True, False])})
+    runner.go(flow=flow, data=data, context={"trace": random.choice([True, False])}) #nosec
 
 print(this)

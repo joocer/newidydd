@@ -1,9 +1,9 @@
-name: bandit
+name: test_suite
 
 on: [push, pull_request]
 
 jobs:
-  bandit:
+  tests_suite:
     runs-on: ubuntu-latest
     steps:
       - name: check out
@@ -14,8 +14,11 @@ jobs:
         with:
           python-version: '3.8' 
           
-      - name: install 
-        run:  pip install bandit
+      - name: install pytest 
+        run:  pip install pytest
+        
+      - name: install requirements
+        run:  pip install -r $GITHUB_WORKSPACE/requirements.txt
 
       - name: run test
-        run: bandit -r . -x tests
+        run: pytest 
