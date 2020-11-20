@@ -16,13 +16,14 @@ class BaseOperator(abc.ABC):
     def __init__(self, **kwargs):
         self.graph = None           # part of drawing dags
         self.visits = 0             # number of times this operator has been run
-        self.execution_time_ns = 0   # nano seconds of cpu execution time
+        self.execution_time_ns = 0  # nano seconds of cpu execution time
+        self.errors = 0             # number of errors
 
         self.retry_count = _clamp(kwargs.get('retry_count', 1), 1, 5)
         self.retry_wait = _clamp(kwargs.get('retry_wait', 5), 1, 300)
 
         if inspect.getsource(self.execute) != inspect.getsource(self.__class__.execute):
-            raise Exception("operatro's __call__ method must not be overridden")
+            raise Exception("Operator's __call__ method must not be overridden.")
 
     @abc.abstractmethod
     def execute(self, data={}, context={}):
@@ -38,14 +39,16 @@ class BaseOperator(abc.ABC):
             try:
                 start_time = time.process_time_ns()
                 outcome = self.execute(data, context)
-                end_time = time.process_time_ns()
+                self.execution_time_ns += (time.process_time_ns() - start_time)
                 break
-            except:
+            except Exception as err:
+                self.errors += 1
                 attempts_to_go -= 1
+                print(F"[ERROR] {datetime.datetime.today().isoformat()} {err}")
                 if attempts_to_go:
                     time.sleep(self.retry_wait)
-
-        self.execution_time_ns += (end_time - start_time)
+                else:
+                    return None
 
         if context.get('trace', False):
             print(F"[TRACE] {datetime.datetime.today().isoformat()} {data}")
@@ -60,7 +63,7 @@ class BaseOperator(abc.ABC):
         }
 
     def __str__(self):
-        return F"[SENSOR] {self.__class__.__name__} {self.visits} {self.execution_time_ns}"
+        return F"[SENSOR] {datetime.datetime.today().isoformat()} {self.__class__.__name__} {self.visits} {self.execution_time_ns}"
 
     @functools.lru_cache(1)
     def version(self):

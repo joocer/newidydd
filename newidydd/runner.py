@@ -12,7 +12,7 @@ def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
         for outcome_data, outcome_context in outcome:
             for next_node in next_nodes:
                 _inner_runner(flow=flow, node=next_node[1], data=outcome_data, context=outcome_context)
-    else:
+    elif outcome:
         outcome_data, outcome_context = outcome
         for next_node in next_nodes:
             _inner_runner(flow=flow, node=next_node[1], data=outcome_data, context=outcome_context) 
