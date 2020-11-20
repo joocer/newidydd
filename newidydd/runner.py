@@ -3,6 +3,11 @@ from .operations import UndefinedOperator
 
 def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
     """
+    Walk the flow by:
+    - Getting the function of the current node
+    - Execute the function, wrapped in the base class
+    - Find the next step by finding outgoing edges
+    - Call this method for the next step
     """
     func = flow.nodes()[node].get("function", UndefinedOperator())
     next_nodes = flow.out_edges(node, default=[])
@@ -20,6 +25,8 @@ def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
 
 def go(flow=None, data={}, context={}):
     """
+    Execute a flow by discovering starting nodes and then
+    calling a recursive function to walk the flow
     """
     nodes = [node for node in flow.nodes() if len(flow.in_edges(node)) == 0]
     for node in nodes:
