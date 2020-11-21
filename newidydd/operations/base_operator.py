@@ -37,9 +37,9 @@ class BaseOperator(abc.ABC):
         attempts_to_go = self.retry_count
         while attempts_to_go > 0:
             try:
-                start_time = time.time_ns()
+                start_time = time.perf_counter_ns()
                 outcome = self.execute(data, context)
-                self.execution_time_ns += (time.time_ns() - start_time)
+                self.execution_time_ns += (time.perf_counter_ns() - start_time)
                 break
             except Exception as err:
                 self.errors += 1

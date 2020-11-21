@@ -40,9 +40,9 @@ def test_operator_validator_case_two():
     CASE_TWO_DATA = { "string_field": 100 }
     CASE_TWO_SCHEMA = { "fields": [ { "name": "string_field", "type": "string" } ] }
 
-    test = newidydd.operations.ValidationOperator(CASE_TWO_DATA)
-    result = test.execute(CASE_TWO_SCHEMA)
-    assert (result), "[CASE TWO] Validator failed testing invalid string"
+    test = newidydd.operations.ValidationOperator(CASE_TWO_SCHEMA)
+    result = test.execute(CASE_TWO_DATA)
+    assert (not result), "[CASE TWO] Validator failed testing invalid string"
     print("[CASE TWO] Passed")
 
 
@@ -51,9 +51,9 @@ def test_operator_validator_case_three():
     CASE_THREE_DATA = { "number_field": "one hundred" }
     CASE_THREE_SCHEMA = { "fields": [ { "name": "number_field", "type": "numeric" } ] }
 
-    test = newidydd.operations.ValidationOperator(CASE_THREE_DATA)
-    result = test.execute(CASE_THREE_SCHEMA)
-    assert (result), "[CASE THREE] Validator failed testing invalid number"
+    test = newidydd.operations.ValidationOperator(CASE_THREE_SCHEMA)
+    result = test.execute(CASE_THREE_DATA)
+    assert (not result), "[CASE THREE] Validator failed testing invalid number"
     print("[CASE THREE] Passed")
 
 

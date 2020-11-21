@@ -22,7 +22,7 @@ class ExtractFollowersOperation(BaseOperator):
     of message objects, even if there's only one.
     """
     def execute(self, data={}, context={}):
-        followers = int(data.get("followers", -1))
+        followers = int(data.get("followers", 0))
         verified = data.get("user_verified", "False") == "True"
         result = {
             "followers": followers,
@@ -70,7 +70,7 @@ def main():
 
     t = time.process_time_ns()
 
-    file_reader = datasets.io.read_jsonl("small.jsonl", limit=-1)
+    file_reader = datasets.io.read_jsonl("small.jsonl", limit=1000)
     for record in file_reader:
         runner.go(flow=flow, data=record, context={}) # nosec
 
