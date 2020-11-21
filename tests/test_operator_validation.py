@@ -1,5 +1,10 @@
 """
-Test Validator
+Validator test cases
+
+1) Valid schema and data
+2) Valid schema, invalid string
+3) Valid schema, invalid number
+4) Invalid schema, no data
 """
 
 import os
@@ -31,8 +36,8 @@ def test_operator_validator_case_one():
 
     test = newidydd.operations.ValidationOperator(CASE_ONE_SCHEMA)
     result = test.execute(CASE_ONE_DATA)
-    assert (result != None), "[CASE ONE] Validator failed testing well-formed data"
-    print("[CASE ONE] Passed")
+    assert (result != None), "[CASE ONE - VALIDATOR] Validator failed testing well-formed data"
+    print("[CASE ONE - VALIDATOR] Passed")
 
 
 def test_operator_validator_case_two():
@@ -42,8 +47,8 @@ def test_operator_validator_case_two():
 
     test = newidydd.operations.ValidationOperator(CASE_TWO_SCHEMA)
     result = test.execute(CASE_TWO_DATA)
-    assert (not result), "[CASE TWO] Validator failed testing invalid string"
-    print("[CASE TWO] Passed")
+    assert (not result), "[CASE TWO - VALIDATOR] Validator failed testing invalid string"
+    print("[CASE TWO - VALIDATOR] Passed")
 
 
 def test_operator_validator_case_three():
@@ -53,10 +58,34 @@ def test_operator_validator_case_three():
 
     test = newidydd.operations.ValidationOperator(CASE_THREE_SCHEMA)
     result = test.execute(CASE_THREE_DATA)
-    assert (not result), "[CASE THREE] Validator failed testing invalid number"
-    print("[CASE THREE] Passed")
+    assert (not result), "[CASE THREE - VALIDATOR] Validator failed testing invalid number"
+    print("[CASE THREE - VALIDATOR] Passed")
+
+
+def test_operator_validator_case_four():
+    # CASE FOUR = INVALID SCHEMA
+    result = True
+    try:
+        newidydd.operations.ValidationOperator()
+    except:
+        result = False
+    assert (not result), "[CASE FOUR - VALIDATOR] Validator failed testing invalid schema"
+    print("[CASE FOUR - VALIDATOR] Passed")
+    
+
+def test_operator_validator_case_five():
+    # CASE FIVE = INVALID BOOLEAN
+    CASE_FIVE_DATA = { "boolean_field": "not true" }
+    CASE_FIVE_SCHEMA = { "fields": [ { "name": "boolean_field", "type": "boolean" } ] }
+
+    test = newidydd.operations.ValidationOperator(CASE_FIVE_SCHEMA)
+    result = test.execute(CASE_FIVE_DATA)
+    assert (not result), "[CASE FIVE - VALIDATOR] Validator failed testing invalid boolean"
+    print("[CASE FIVE - VALIDATOR] Passed")
 
 
 test_operator_validator_case_one()
 test_operator_validator_case_two()
 test_operator_validator_case_three()
+test_operator_validator_case_four()
+test_operator_validator_case_five()
