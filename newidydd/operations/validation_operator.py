@@ -12,7 +12,6 @@ class ValidationOperator(BaseOperator):
         self.invalid_records = 0
         super().__init__()
 
-
     def execute(self, data={}, context={}):
         valid = self.validator(subject=data)
         if not valid:

@@ -1,4 +1,5 @@
 from .operations import UndefinedOperator
+import uuid
 
 
 def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
@@ -28,6 +29,8 @@ def go(flow=None, data={}, context={}):
     Execute a flow by discovering starting nodes and then
     calling a recursive function to walk the flow
     """
+    my_context = context.copy()
+    my_context['uuid'] = str(uuid.uuid4())
     nodes = [node for node in flow.nodes() if len(flow.in_edges(node)) == 0]
     for node in nodes:
-        _inner_runner(flow=flow, node=node, data=data, context=context)
+        _inner_runner(flow=flow, node=node, data=data, context=my_context)

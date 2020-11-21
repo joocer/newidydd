@@ -5,3 +5,6 @@
 
 
 newidydd is a very simple data processing library written in Python.
+
+
+"newidydd" means "pipeline" in Welsh

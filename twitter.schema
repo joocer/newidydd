@@ -1,0 +1,17 @@
+{"namespace": "vap.twitter",
+ "type": "record",
+ "name": "Tweets",
+ "fields": [
+     {"name": "_id", "type": "string"},
+     {"name": "country",  "type": ["string", "null"]},
+     {"name": "followers", "type": ["string", "null"]},
+     {"name": "geo",  "type": ["string", "null"]},
+     {"name": "location",  "type": ["string", "null"]},
+     {"name": "sentiment",  "type": ["string", "null"]},
+     {"name": "timestamp",  "type": "string"},
+     {"name": "tweet",  "type": ["string", "null"]},
+     {"name": "user_verified",  "type": ["string", "null"]},
+     {"name": "userid",  "type": "string"},
+     {"name": "username",  "type": "string"}
+ ]
+}

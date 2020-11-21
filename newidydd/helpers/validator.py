@@ -104,6 +104,8 @@ class Schema():
             }
         except KeyError:
             raise ValueError("Invalid type specified in schema")
+        if len(self._validators) == 0:
+            raise ValueError("Invalid schema specification")
 
     def validate(self, subject=None, raise_exception=False):
         result = all(

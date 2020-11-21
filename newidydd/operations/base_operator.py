@@ -37,9 +37,9 @@ class BaseOperator(abc.ABC):
         attempts_to_go = self.retry_count
         while attempts_to_go > 0:
             try:
-                start_time = time.process_time_ns()
+                start_time = time.time_ns()
                 outcome = self.execute(data, context)
-                self.execution_time_ns += (time.process_time_ns() - start_time)
+                self.execution_time_ns += (time.time_ns() - start_time)
                 break
             except Exception as err:
                 self.errors += 1
@@ -51,7 +51,7 @@ class BaseOperator(abc.ABC):
                     return None
 
         if context.get('trace', False):
-            print(F"[TRACE] {datetime.datetime.today().isoformat()} {data}")
+            print(F"[TRACE] {datetime.datetime.today().isoformat()} {context.get('uuid')} {self.__class__.__name__} {data}")
 
         return outcome
 
@@ -63,7 +63,7 @@ class BaseOperator(abc.ABC):
         }
 
     def __str__(self):
-        return F"[SENSOR] {datetime.datetime.today().isoformat()} {self.__class__.__name__} {self.visits} {self.execution_time_ns}"
+        return F"[SENSOR] {datetime.datetime.today().isoformat()} {self.__class__.__name__} {self.visits} {self.execution_time_ns / 1e9}"
 
     @functools.lru_cache(1)
     def version(self):
