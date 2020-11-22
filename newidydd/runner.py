@@ -5,7 +5,7 @@ import random
 
 def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
     """
-    Walk the flow by:
+    Walk the dag/flow by:
     - Getting the function of the current node
     - Execute the function, wrapped in the base class
     - Find the next step by finding outgoing edges
@@ -29,9 +29,12 @@ def go(flow=None, data={}, context={}, trace_sample_rate=0.001):
     Execute a flow by discovering starting nodes and then
     calling a recursive function to walk the flow
     """
+    # create a copy of the context
     my_context = context.copy()
+    # create a uuid for the message
     my_context['uuid'] = str(uuid.uuid4())
 
+    # if trace hasn't been set - randomly select based on a sample rate
     if not my_context.get('trace'):
         my_context['trace'] = random.randint(1, round(1 / trace_sample_rate)) == 1  # nosec
 
