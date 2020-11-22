@@ -1,5 +1,6 @@
 from .operations import UndefinedOperator
 import uuid
+import random
 
 
 def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
@@ -14,23 +15,26 @@ def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
     next_nodes = flow.out_edges(node, default=[])
     outcome = func(data, context)
 
-    if type(outcome).__name__ == "generator":
+    if outcome:
+        if not type(outcome).__name__ in ["generator", "list"]:
+            outcome_data, outcome_context = outcome
+            outcome = [(outcome_data, outcome_context)]
         for outcome_data, outcome_context in outcome:
             for next_node in next_nodes:
                 _inner_runner(flow=flow, node=next_node[1], data=outcome_data, context=outcome_context)
-    elif outcome:
-        outcome_data, outcome_context = outcome
-        for next_node in next_nodes:
-            _inner_runner(flow=flow, node=next_node[1], data=outcome_data, context=outcome_context) 
 
 
-def go(flow=None, data={}, context={}):
+def go(flow=None, data={}, context={}, trace_sample_rate=0.001):
     """
     Execute a flow by discovering starting nodes and then
     calling a recursive function to walk the flow
     """
     my_context = context.copy()
     my_context['uuid'] = str(uuid.uuid4())
+
+    if not my_context.get('trace'):
+        my_context['trace'] = random.randint(1, round(1 / trace_sample_rate)) == 1  # nosec
+
     nodes = [node for node in flow.nodes() if len(flow.in_edges(node)) == 0]
     for node in nodes:
         _inner_runner(flow=flow, node=node, data=data, context=my_context)

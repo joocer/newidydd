@@ -7,10 +7,10 @@ from ..helpers.validator import Schema
 
 class ValidationOperator(BaseOperator):
 
-    def __init__(self, schema={}):
+    def __init__(self, schema={}, *args, **kwargs):
         self.validator = Schema(schema)
         self.invalid_records = 0
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def execute(self, data={}, context={}):
         valid = self.validator(subject=data)

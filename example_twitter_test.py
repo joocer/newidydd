@@ -1,7 +1,3 @@
-"""
-This is kind of what I want to write
-"""
-
 from newidydd import BaseOperator, runner
 import newidydd
 import datasets.io
@@ -10,17 +6,7 @@ import random
 
 
 class ExtractFollowersOperation(BaseOperator):
-    """
-    Processing operation, unique to this flow.
 
-    Create a class that inherits from Operation and override the
-    execute method. The method is passed a message object, this
-    has a payload attribute which is one record being pushed
-    through the flow.
-
-    Perform the porcessing, update the payload and pass back a list
-    of message objects, even if there's only one.
-    """
     def execute(self, data={}, context={}):
         followers = int(data.get("followers", 0))
         verified = data.get("user_verified", "False") == "True"
@@ -33,24 +19,14 @@ class ExtractFollowersOperation(BaseOperator):
 
 
 class MostFollowersOperation(BaseOperator):
-    """
-    Another processing operation unique to this flow.
 
-    Includes an init method, this is called once when the flow
-    is being initialized
-    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.user = ""
         self.followers = 0
 
     def execute(self, data, context):
-        """
-        This operation will drop records, it does that by returning
-        None in the place of messages.
 
-        No return also works but returning None is more explicit.
-        """
         if data.get("followers") > self.followers:
             self.followers = data.get("followers")
             self.user = data.get("user")
@@ -63,20 +39,23 @@ def main():
 
     data_validation = newidydd.operations.ValidationOperator(schema=open("twitter.schema", "r").read())
     extract_followers = ExtractFollowersOperation()
+    filter_verified = newidydd.operations.FilterOperator(condition=lambda r: r.get('user_verified', 'False') == 'True')
     most_followers = MostFollowersOperation()
     screen_sink = newidydd.operations.PrintOperator()
+    end = newidydd.operations.EndOperator()
 
-    flow = data_validation > extract_followers > most_followers > screen_sink
+    flow = data_validation > filter_verified > extract_followers > most_followers > screen_sink > end
 
     t = time.process_time_ns()
 
     file_reader = datasets.io.read_jsonl("small.jsonl", limit=1000)
     for record in file_reader:
         runner.go(flow=flow, data=record, context={}) # nosec
-
+        
     print((time.process_time_ns() - t) / 1e9)
 
     print(data_validation)
+    print(filter_verified)
     print(extract_followers)
     print(most_followers)
     print(screen_sink)

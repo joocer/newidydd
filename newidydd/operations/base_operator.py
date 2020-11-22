@@ -1,15 +1,14 @@
 """
 BaseOperator is a base class which includes most of the 
 heavy-lifting for the execution.
-
 """
-
 import abc
 import inspect
 import hashlib
 import functools
 import time
 import datetime
+
 
 class BaseOperator(abc.ABC):
 
@@ -44,7 +43,7 @@ class BaseOperator(abc.ABC):
             except Exception as err:
                 self.errors += 1
                 attempts_to_go -= 1
-                print(F"[ERROR] {datetime.datetime.today().isoformat()} {err}")
+                print(F"[ERROR] {datetime.datetime.today().isoformat()} {self.__class__.__name__} {type(err).__name__} {err}")
                 if attempts_to_go:
                     time.sleep(self.retry_wait)
                 else:
@@ -92,6 +91,8 @@ class BaseOperator(abc.ABC):
         """
         import networkx as nx
 
+        print('<<', type(self.graph), self.__class__.__name__)
+
         # make sure the target is iterable
         if type(target).__name__ != "list":
             target = [target]
@@ -120,7 +121,7 @@ class BaseOperator(abc.ABC):
                 point.graph = graph
         # this variable only exists to build the graph, we don't
         # need it anymore so destroy it
-        del self.graph
+        self.graph = None
 
         return graph
 
