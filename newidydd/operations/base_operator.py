@@ -8,6 +8,10 @@ import hashlib
 import functools
 import time
 import datetime
+from ..helpers.block_chain import BlockChain
+
+
+BLOCK_CHAIN = 'trace-block'
 
 
 class BaseOperator(abc.ABC):
@@ -50,7 +54,12 @@ class BaseOperator(abc.ABC):
                     return None
 
         if context.get('trace', False):
-            print(F"[TRACE] {datetime.datetime.today().isoformat()} {context.get('uuid')} {self.__class__.__name__} {data}")
+            #print(F"[TRACE] {datetime.datetime.today().isoformat()} {context.get('uuid')} {self.__class__.__name__} {outcome[0] if outcome else 'None'}")
+            if not context.get(BLOCK_CHAIN):
+                context[BLOCK_CHAIN] = BlockChain(data=data, uuid=context['uuid'])
+            context[BLOCK_CHAIN].add_new_event(data=outcome[0] if outcome else 'None', operator=self.__class__.__name__)
+            if not outcome:
+                context[BLOCK_CHAIN].commit_block()
 
         return outcome
 
@@ -90,8 +99,6 @@ class BaseOperator(abc.ABC):
         Op1 > Op2 > [Op3, Op4]
         """
         import networkx as nx
-
-        print('<<', type(self.graph), self.__class__.__name__)
 
         # make sure the target is iterable
         if type(target).__name__ != "list":

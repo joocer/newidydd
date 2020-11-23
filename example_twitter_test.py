@@ -45,12 +45,13 @@ def main():
     end = newidydd.operations.EndOperator()
 
     flow = data_validation > filter_verified > extract_followers > most_followers > screen_sink > end
+    #flow = data_validation > [filter_verified, extract_followers > most_followers > screen_sink > end]
 
     t = time.process_time_ns()
 
-    file_reader = datasets.io.read_jsonl("small.jsonl", limit=1000)
+    file_reader = datasets.io.read_jsonl("small.jsonl", limit=1)
     for record in file_reader:
-        runner.go(flow=flow, data=record, context={}) # nosec
+        runner.go(flow=flow, data=record, context={}, trace_sample_rate=1) # nosec
         
     print((time.process_time_ns() - t) / 1e9)
 

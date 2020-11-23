@@ -2,6 +2,7 @@ from .operations import UndefinedOperator
 import uuid
 import random
 
+BLOCK_CHAIN = 'trace-block'
 
 def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
     """
@@ -41,3 +42,7 @@ def go(flow=None, data={}, context={}, trace_sample_rate=0.001):
     nodes = [node for node in flow.nodes() if len(flow.in_edges(node)) == 0]
     for node in nodes:
         _inner_runner(flow=flow, node=node, data=data, context=my_context)
+
+    if my_context.get(BLOCK_CHAIN):
+        import pprint
+        pprint.pprint(my_context[BLOCK_CHAIN].chain)

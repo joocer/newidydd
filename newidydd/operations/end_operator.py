@@ -11,4 +11,7 @@ from .base_operator import BaseOperator
 class EndOperator(BaseOperator):
 
     def execute(self, data={}, context={}):
-        pass
+
+
+        return None
+
