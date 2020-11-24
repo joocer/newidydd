@@ -9,7 +9,7 @@ import functools
 import time
 import datetime
 from ..helpers.block_chain import BlockChain
-
+import logging
 
 BLOCK_CHAIN = 'trace-block'
 
@@ -72,6 +72,9 @@ class BaseOperator(abc.ABC):
 
     def __str__(self):
         return F"[SENSOR] {datetime.datetime.today().isoformat()} {self.__class__.__name__} {self.visits} {self.execution_time_ns / 1e9}"
+
+    def __del__(self):
+        logging.getLogger("newidydd").debug(F"Operator {self.__class__.__name__} ending, run {self.visits} times.")
 
     @functools.lru_cache(1)
     def version(self):

@@ -34,8 +34,9 @@ class MostFollowersOperation(BaseOperator):
         else:
             return None
 
-
 def main():
+
+    newidydd.set_up_logging()
 
     data_validation = newidydd.operations.ValidationOperator(schema=open("twitter.schema", "r").read())
     extract_followers = ExtractFollowersOperation()
@@ -51,7 +52,7 @@ def main():
 
     file_reader = datasets.io.read_jsonl("small.jsonl", limit=1)
     for record in file_reader:
-        runner.go(flow=flow, data=record, context={}, trace_sample_rate=1) # nosec
+        runner.go(flow=flow, data=record, context={}, trace_sample_rate=0) # nosec
         
     print((time.process_time_ns() - t) / 1e9)
 

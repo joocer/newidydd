@@ -1,6 +1,7 @@
 from .operations import UndefinedOperator
 import uuid
 import random
+import logging
 
 BLOCK_CHAIN = 'trace-block'
 
@@ -36,7 +37,7 @@ def go(flow=None, data={}, context={}, trace_sample_rate=0.001):
     my_context['uuid'] = str(uuid.uuid4())
 
     # if trace hasn't been set - randomly select based on a sample rate
-    if not my_context.get('trace'):
+    if not my_context.get('trace') and trace_sample_rate:
         my_context['trace'] = random.randint(1, round(1 / trace_sample_rate)) == 1  # nosec
 
     nodes = [node for node in flow.nodes() if len(flow.in_edges(node)) == 0]
