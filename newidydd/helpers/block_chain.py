@@ -20,17 +20,14 @@ class BlockChain(object):
         if not previous_hash:
             previous_hash = 'seed:' + random_string(length=59)
         
-        try:
-            if private_key_file:
-                with open(private_key_file, "rb") as key_file:
-                    private_key = serialization.load_pem_private_key(
-                        key_file.read(),
-                        password=None,
-                        backend=default_backend()
-                    )
-            self.private_key = private_key
-        except:
-            pass
+        if private_key_file:
+            with open(private_key_file, "rb") as key_file:
+                private_key = serialization.load_pem_private_key(
+                    key_file.read(),
+                    password=None,
+                    backend=default_backend()
+                )
+        self.private_key = private_key
 
         self.commit_block(previous_hash=previous_hash)
 
