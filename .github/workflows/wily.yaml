@@ -18,9 +18,9 @@ jobs:
         run:  pip install wily
 
       - name: initialize wily
-        working-directory: $GITHUB_WORKSPACE/
+        working-directory: /home/runner/work/newidydd/newidydd
         run:  wily build
 
       - name: run test
-        working-directory: $GITHUB_WORKSPACE/
+        working-directory: /home/runner/work/newidydd/newidydd
         run:  wily rank
