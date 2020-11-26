@@ -13,7 +13,9 @@ def _inner_runner(flow=None, node=None, data={}, context={}, **kwargs):
     - Find the next step by finding outgoing edges
     - Call this method for the next step
     """
-    func = flow.nodes()[node].get("function", UndefinedOperator())
+    func = flow.nodes()[node].get("function")
+    if not func:
+        func = UndefinedOperator()
     next_nodes = flow.out_edges(node, default=[])
     outcome = func(data, context)
 

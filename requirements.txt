@@ -1,2 +1,3 @@
 networkx
 cryptography
+git+https://github.com/joocer/Typhaon

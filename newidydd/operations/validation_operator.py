@@ -2,7 +2,7 @@
 Dictionary Validation Operator
 """
 from .base_operator import BaseOperator
-from ..helpers.validator import Schema
+from typhaon import Schema
 
 
 class ValidationOperator(BaseOperator):
