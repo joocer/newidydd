@@ -18,7 +18,7 @@ jobs:
         run:  pip install wily
 
       - name: initialize wily
-        run:  wily build src/
+        run:  wily build
 
       - name: run test
-        run: wily diff src/ -r HEAD^1 
+        run: wily rank
