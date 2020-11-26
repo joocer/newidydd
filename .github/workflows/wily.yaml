@@ -18,7 +18,9 @@ jobs:
         run:  pip install wily
 
       - name: initialize wily
+        working-directory: $GITHUB_WORKSPACE
         run:  wily build
 
       - name: run test
-        run: wily rank
+        working-directory: $GITHUB_WORKSPACE
+        run:  wily rank
